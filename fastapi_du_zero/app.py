@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import FastAPI
 
-from fastapi_du_zero.schemas import Message, UserSchema, UserPublic, UserDB
+from fastapi_du_zero.schemas import Message, UserDB, UserPublic, UserSchema
 
 app = FastAPI()
 
@@ -16,11 +16,7 @@ def read_root():
 
 @app.post('/users/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def create_user(user: UserSchema):
-
-    user_with_id = UserDB(
-        id=len(database) +1,
-        **user.model_dump()
-    )
+    user_with_id = UserDB(id=len(database) + 1, **user.model_dump())
 
     database.append(user_with_id)
 
