@@ -22,5 +22,20 @@ def test_create_user_retornar_created_e_nome_email_id(client):
     assert response.json() == {
         'username': 'melissa',
         'email': 'melissa@exemplo.com',
-        'id': 1,
+        'id': 1
+    }
+
+
+def test_read_users_retornar_ok_e_lista_nome_email_id(client):
+    response = client.get('/users/')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'users':
+        [
+            {
+                'username': 'melissa',
+                'email': 'melissa@exemplo.com',
+                'id': 1
+            }
+        ]
     }
