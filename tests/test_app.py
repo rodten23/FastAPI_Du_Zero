@@ -39,3 +39,35 @@ def test_read_users_retornar_ok_e_lista_nome_email_id(client):
             }
         ]
     }
+
+
+def test_update_users_cenario_feliz_OK_e_retorna_nome_email_id(client):
+    response = client.put(
+        '/users/1',
+        json={
+            'username': 'melissa',
+            'email': 'melissa@exemplo.com',
+            'password': 'novo-segredo'
+        }
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'username': 'melissa',
+        'email': 'melissa@exemplo.com',
+        'id': 1
+    }
+
+
+def test_update_users_cenario_erro_not_found_e_usuario_nao_encontrado(client):
+    response = client.put(
+        '/users/999',
+        json={
+            'username': 'melissa',
+            'email': 'melissa@exemplo.com',
+            'password': 'novo-segredo'
+        }
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Usuário não encontrado!'}
