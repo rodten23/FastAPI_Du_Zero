@@ -71,3 +71,9 @@ def test_update_users_cenario_erro_not_found_e_usuario_nao_encontrado(client):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {'detail': 'Usuário não encontrado!'}
+
+
+def test_delete_user(client):
+    response = client.delete('/users/1')
+
+    assert response.json() == {'message': 'Usuário excluído!'}
