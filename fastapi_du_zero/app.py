@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 
 from fastapi_du_zero.schemas import (
     Message,
@@ -10,7 +11,7 @@ from fastapi_du_zero.schemas import (
     UserSchema,
 )
 
-app = FastAPI()
+app = FastAPI(title='API FastAPI Kanban')
 
 database = []
 
@@ -18,6 +19,19 @@ database = []
 @app.get('/', status_code=HTTPStatus.OK, response_model=Message)
 def read_root():
     return {'message': 'Olá, Mundo!'}
+
+
+@app.get('/html', status_code=HTTPStatus.OK, response_class=HTMLResponse)
+def html_page():
+    return """
+        <html>
+            <head>
+                <title>Página do Olá, Mundo!</title>
+            </head>
+            <body>
+                <h1>Chega mais, Mundão!</h1>
+            </body>
+        </html>"""
 
 
 @app.post('/users/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
