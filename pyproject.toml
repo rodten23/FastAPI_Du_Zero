@@ -6,7 +6,7 @@ authors = ["rodten23 <rodten23@yahoo.com.br>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.12.*"
+python = ">=3.12,<4.0"
 fastapi = {extras = ["standard"], version = "^0.115.12"}
 taskipy = "^1.14.1"
 
