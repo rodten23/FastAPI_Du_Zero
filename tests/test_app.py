@@ -107,6 +107,7 @@ def test_update_user_cenario_erro_not_found_e_usuario_nao_encontrado(client):
 def test_delete_user_cenario_feliz_OK_e_retorna_usuario_excluido(client):
     response = client.delete('/users/1')
 
+    assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'Usuário excluído!'}
 
 
