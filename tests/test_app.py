@@ -25,7 +25,7 @@ def test_html_page_deve_retonar_a_pagina_html(client):
 
 
 def test_create_user_retornar_created_e_nome_email_id(client):
-    response = client.post('/users/',
+    response = client.post('/users',
         json={
             'username': 'melissa',
             'email': 'melissa@exemplo.com',
@@ -42,7 +42,7 @@ def test_create_user_retornar_created_e_nome_email_id(client):
 
 
 def test_read_users_retornar_ok_e_lista_nome_email_id(client):
-    response = client.get('/users/')
+    response = client.get('/users')
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'users':
