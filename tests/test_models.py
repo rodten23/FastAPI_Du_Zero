@@ -1,28 +1,20 @@
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session
+from sqlalchemy import select
 
-from fastapi_du_zero.models import User, table_registry
+from fastapi_du_zero.models import User
 
 
-def test_create_user():
-    # Cria o banco de dados temporário em memória para o teste.
-    # O parâmetro :memory: não funciona para todos os tipos de DB.
-    engine = create_engine('sqlite:///:memory:')
+def test_create_user(session):
+    user = User(
+        username='Rodrigo',
+        email='rodrigo@encadernacao.com',
+        password='vamosla',
+    )
 
-    table_registry.metadata.create_all(engine)
+    session.add(user)
+    session.commit()
 
-    with Session(engine) as session:
-        user = User(
-            username='Rodrigo',
-            email='rodrigo@encadernacao.com',
-            password='vamosla',
-        )
-
-        session.add(user)
-        session.commit()
-
-        result = session.scalar(
-            select(User).where(User.email == 'rodrigo@encadernacao.com')
-        )
+    result = session.scalar(
+        select(User).where(User.email == 'rodrigo@encadernacao.com')
+    )
 
     assert result.username == 'Rodrigo'
