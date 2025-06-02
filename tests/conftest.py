@@ -32,9 +32,12 @@ def session():
 
 
 @contextmanager
-def _mock_db_time(*, model,
-                  time_created_at=datetime(2025, 5, 20),
-                  time_updated_at=datetime(2025, 5, 21)):
+def _mock_db_time(
+    *,
+    model,
+    time_created_at=datetime(2025, 5, 20),
+    time_updated_at=datetime(2025, 5, 21),
+):
     def fake_time_hook(mapper, connection, target):
         if hasattr(target, 'created_at'):
             target.created_at = time_created_at
