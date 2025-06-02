@@ -2,7 +2,10 @@ from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 
+from fastapi_du_zero.models import User
 from fastapi_du_zero.schemas import (
     Message,
     UserDB,
@@ -10,6 +13,7 @@ from fastapi_du_zero.schemas import (
     UserPublic,
     UserSchema,
 )
+from fastapi_du_zero.settings import Settings
 
 app = FastAPI(title='API FastAPI Kanban')
 
@@ -36,11 +40,40 @@ def html_page():
 
 @app.post('/users', status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def create_user(user: UserSchema):
-    user_with_id = UserDB(id=len(database) + 1, **user.model_dump())
+    engine = create_engine(Settings().DATABASE_URL)
+    session = Session(engine)
 
-    database.append(user_with_id)
+    db_user = session.scalar(
+        select(User).where(
+            (User.username == user.username) | (User.email == user.email)
+        )
+    )
 
-    return user_with_id
+    if db_user:
+        if db_user.username == user.username:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Este nome de usuário já está sendo usado! '
+                'Favor, defina outro.',
+            )
+        elif db_user.email == user.email:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Este endereço de e-mail já está sendo usado! '
+                'Favor, digite outro.',
+            )
+
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        password=user.password
+    )
+
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+
+    return db_user
 
 
 @app.get('/users', status_code=HTTPStatus.OK, response_model=UserList)
