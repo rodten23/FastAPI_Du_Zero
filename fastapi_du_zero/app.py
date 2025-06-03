@@ -1,10 +1,10 @@
 from http import HTTPStatus
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session
+from sqlalchemy import select
 
+from fastapi_du_zero.database import get_session
 from fastapi_du_zero.models import User
 from fastapi_du_zero.schemas import (
     Message,
@@ -13,7 +13,6 @@ from fastapi_du_zero.schemas import (
     UserPublic,
     UserSchema,
 )
-from fastapi_du_zero.settings import Settings
 
 app = FastAPI(title='API FastAPI Kanban')
 
@@ -39,10 +38,7 @@ def html_page():
 
 
 @app.post('/users', status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def create_user(user: UserSchema):
-    engine = create_engine(Settings().DATABASE_URL)
-    session = Session(engine)
-
+def create_user(user: UserSchema, session=Depends(get_session)):
     db_user = session.scalar(
         select(User).where(
             (User.username == user.username) | (User.email == user.email)
@@ -64,9 +60,7 @@ def create_user(user: UserSchema):
             )
 
     db_user = User(
-        username=user.username,
-        email=user.email,
-        password=user.password
+        username=user.username, email=user.email, password=user.password
     )
 
     session.add(db_user)
