@@ -3,6 +3,7 @@ from http import HTTPStatus
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from fastapi_du_zero.database import get_session
 from fastapi_du_zero.models import User
@@ -71,8 +72,14 @@ def create_user(user: UserSchema, session=Depends(get_session)):
 
 
 @app.get('/users', status_code=HTTPStatus.OK, response_model=UserList)
-def read_users():
-    return {'users': database}
+def read_users(
+    limit: int = 10,
+    offset: int = 0,
+    session: Session = Depends(get_session)
+):
+
+    users = session.scalars(select(User).limit(limit).offset(offset))
+    return {'users': users}
 
 
 @app.get(
