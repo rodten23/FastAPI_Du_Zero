@@ -9,7 +9,7 @@ from sqlalchemy.pool import StaticPool
 
 from fastapi_du_zero.app import app
 from fastapi_du_zero.database import get_session
-from fastapi_du_zero.models import table_registry
+from fastapi_du_zero.models import User, table_registry
 
 # pytest.fixture é um bloco de teste reutilizável do Pytest.
 
@@ -68,3 +68,16 @@ def _mock_db_time(
 @pytest.fixture
 def mock_db_time():
     return _mock_db_time
+
+
+@pytest.fixture
+def user(session: Session):
+    user = User(
+        username='Teste',
+        email='teste@teste.com',
+        password='senha-teste')
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return user
